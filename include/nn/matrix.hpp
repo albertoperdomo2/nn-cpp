@@ -14,7 +14,14 @@ class Matrix {
   size_t columns_;
   std::vector<T> data_;
 
-  // XXX: Add inline unbounded versions of some methods here
+  // Unsafe and unbound methods for internal usage
+  inline T& unsafe_at(size_t i, size_t j) {
+   return data_[i * columns_ + j];
+  }
+
+  inline const T& unsafe_at(size_t i, size_t j) const {
+   return data_[i * columns_ + j];
+  }
 
  public:
   Matrix(size_t rows, size_t columns) 
@@ -26,6 +33,11 @@ class Matrix {
     throw std::invalid_argument("initial values size doesn't match matrix dimensions");
    }
    }
+
+  Matrix(const Matrix&) = default;
+  Matrix& operator=(const Matrix&) = default;
+  Matrix(Matrix&&) noexcept = default;
+  Matrix& operator=(Matrix&&) noexcept = default;
 
   // Access element at (i,j)
   T& at(size_t i, size_t j) {
@@ -63,7 +75,22 @@ class Matrix {
    return result;
   }
 
+  Matrix<T>& add_inplace(const Matrix<T>& A) {
+   if (A.rows() != rows_ || A.columns() != columns_) {
+    throw std::invalid_argument(std::string(__func__) + ": matrices are not the same size");
+   }
+
+   for (size_t i = 0; i < rows_; i++) {
+    for (size_t j = 0; j < columns_; j++) {
+     unsafe_at(i, j) += A.at(i, j);
+    }
+   }
+
+   return *this;
+  }
+
   Matrix<T> operator+(const Matrix<T>& A) const { return add(A); }
+  Matrix<T>& operator+=(const Matrix<T>& A) { return add_inplace(A); }
 
   Matrix<T> mul(const Matrix<T>& A) const {
    if (A.rows() != columns_) {
@@ -96,11 +123,32 @@ class Matrix {
 
    return result;
   }
+
+  Matrix<T>& scalar_mul_inplace(const T scalar) {
+   for (size_t i = 0; i < rows_; i++) {
+    for (size_t j = 0; j < columns_; j++) {
+     unsafe_at(i, j) *= scalar;
+    }
+   }
+
+   return *this;
+  }
    
   Matrix<T> operator*(const Matrix<T>& A) const { return mul(A); }
   Matrix<T> operator*(const T scalar) const { return scalar_mul(scalar); }
+  Matrix<T>& operator*=(const T scalar) { return scalar_mul_inplace(scalar); }
 
-  Matrix transpose() const;  // TODO
+  Matrix transpose() const {
+   Matrix<T> result(rows_, columns_);
+
+   for (size_t i = 0; i < rows_; i++) {
+    for (size_t j = 0; j < columns_; j++) {
+     result.at(j,i) = at(i,j);
+    }
+   }
+
+   return result;
+  }
 
   // Utils
   void print() const {
