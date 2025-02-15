@@ -171,4 +171,5 @@ class Matrix {
    data_.resize(rows * cols);
   }
 };
+
 #endif
