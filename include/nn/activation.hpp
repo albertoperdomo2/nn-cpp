@@ -73,7 +73,7 @@ namespace nn {
      if (x >= static_cast<T>(100.0)) return static_cast<T>(1);
      if (x <= static_cast<T>(-100.0)) return static_cast<T>(-1);
 
-     return (std::exp(x) - std::exp(-x)) / (std::exp(x) + std::exp(-x));
+     return std::tanh(x);
     }
 
     static T backward(const T x) {
