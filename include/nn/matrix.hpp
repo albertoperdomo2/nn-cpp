@@ -92,6 +92,21 @@ class Matrix {
   Matrix<T> operator+(const Matrix<T>& A) const { return add(A); }
   Matrix<T>& operator+=(const Matrix<T>& A) { return add_inplace(A); }
 
+  Matrix<T> hadamard(const Matrix<T>& other) const {
+   if (rows_ != other.rows() || columns_ != other.columns()) {
+    throw std::invalid_argument(std::string(__func__) + ": matrices must have the same dimensions for Hadamard product");
+   }
+
+   Matrix<T> result(rows_, columns_);
+   for (size_t i = 0; i < rows_; i++) {
+    for (size_t j = 0; j < columns_; j++) {
+     result.at(i, j) = at(i, j) * other.at(i, j);
+    }
+   }
+
+   return result;
+  }
+
   Matrix<T> mul(const Matrix<T>& A) const {
    if (A.rows() != columns_) {
     throw std::invalid_argument(std::string(__func__) + ": matrices cannot be multiplied");

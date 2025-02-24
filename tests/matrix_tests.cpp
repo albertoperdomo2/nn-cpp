@@ -73,3 +73,25 @@ TEST_F(MatrixTest, InvalidDimensionsTest) {
     
     EXPECT_THROW(m1 * m2, std::invalid_argument);
 }
+
+TEST_F(MatrixTest, HadamardProduct) {
+    std::vector<float> values1 = {1.0, 2.0, 3.0, 4.0};
+    std::vector<float> values2 = {5.0, 6.0, 7.0, 8.0};
+
+    Matrix<float> m1(2, 2, values1);
+    Matrix<float> m2(2, 2, values2);
+
+    Matrix<float> result = m1.hadamard(m2);
+
+    EXPECT_EQ(result.at(0, 0), 5.0f);   // 1.0 * 5.0
+    EXPECT_EQ(result.at(0, 1), 12.0f);  // 2.0 * 6.0
+    EXPECT_EQ(result.at(1, 0), 21.0f);  // 3.0 * 7.0
+    EXPECT_EQ(result.at(1, 1), 32.0f);  // 4.0 * 8.0
+}
+
+TEST_F(MatrixTest, HadamardProductDimensionMismatch) {
+    Matrix<float> m1(2, 2);
+    Matrix<float> m2(2, 3);
+
+    EXPECT_THROW(m1.hadamard(m2), std::invalid_argument);
+}
