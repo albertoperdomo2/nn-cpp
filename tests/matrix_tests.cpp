@@ -3,13 +3,8 @@
 
 class MatrixTest : public ::testing::Test {
 protected:
-    void SetUp() override {
-        // Setup code if needed
-    }
-
-    void TearDown() override {
-        // Cleanup code if needed
-    }
+    void SetUp() override {}
+    void TearDown() override {}
 };
 
 TEST_F(MatrixTest, ConstructorTest) {
@@ -32,13 +27,27 @@ TEST_F(MatrixTest, AdditionTest) {
     std::vector<float> values2 = {2.0, 3.0, 4.0, 5.0};
     Matrix<float> m1(2, 2, values1);
     Matrix<float> m2(2, 2, values2);
-    
+
     Matrix<float> result = m1 + m2;
-    
+
     EXPECT_EQ(result.at(0,0), 3.0);
     EXPECT_EQ(result.at(0,1), 5.0);
     EXPECT_EQ(result.at(1,0), 7.0);
     EXPECT_EQ(result.at(1,1), 9.0);
+}
+
+TEST_F(MatrixTest, SubtractionTest) {
+    std::vector<float> values1 = {4.0, 6.0, 8.0, 10.0};
+    std::vector<float> values2 = {1.0, 2.0, 4.0, 6.0};
+    Matrix<float> m1(2, 2, values1);
+    Matrix<float> m2(2, 2, values2);
+
+    Matrix<float> result = m1 - m2;
+
+    EXPECT_EQ(result.at(0,0), 3.0);
+    EXPECT_EQ(result.at(0,1), 4.0);
+    EXPECT_EQ(result.at(1,0), 4.0);
+    EXPECT_EQ(result.at(1,1), 4.0);
 }
 
 TEST_F(MatrixTest, MultiplicationTest) {

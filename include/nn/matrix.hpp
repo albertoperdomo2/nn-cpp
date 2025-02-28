@@ -75,6 +75,39 @@ class Matrix {
    return result;
   }
 
+  Matrix<T> subtract(const Matrix<T>& A) const {
+   if (A.rows() != rows_ || A.columns() != columns_) {
+    throw std::invalid_argument(std::string(__func__) + ": matrices are not the same size");
+   }
+
+   Matrix<T> result(rows_, columns_);
+
+   for (size_t i = 0; i < rows_; i++) {
+    for (size_t j = 0; j < columns_; j++) {
+     result.at(i, j) = at(i,j) - A.at(i,j);
+    }
+   }
+
+   return result;
+  }
+
+  Matrix<T>& subtract_inplace(const Matrix<T>& A) {
+   if (A.rows() != rows_ || A.columns() != columns_) {
+    throw std::invalid_argument(std::string(__func__) + ": matrices are not the same size");
+   }
+
+   for (size_t i = 0; i < rows_; i++) {
+    for (size_t j = 0; j < columns_; j++) {
+     unsafe_at(i, j) -= A.at(i, j);
+    }
+   }
+
+   return *this;
+  }
+
+  Matrix<T> operator-(const Matrix<T>& A) const { return subtract(A); }
+  Matrix<T>& operator-=(const Matrix<T>& A) { return subtract_inplace(A); }
+
   Matrix<T>& add_inplace(const Matrix<T>& A) {
    if (A.rows() != rows_ || A.columns() != columns_) {
     throw std::invalid_argument(std::string(__func__) + ": matrices are not the same size");
