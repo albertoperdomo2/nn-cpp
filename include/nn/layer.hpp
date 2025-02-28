@@ -17,8 +17,17 @@ namespace nn {
   ZERO             // All weights = 0 (for testing)
  };
 
+ template<typename T>
+ class LayerBase {
+  public:
+   virtual ~LayerBase() = default;
+   virtual Matrix<T> forward(const Matrix<T>& input) = 0;
+   virtual Matrix<T> backward(const Matrix<T>& gradient) = 0;
+   virtual void set_optimizer(Optimizer<T>* optimizer) = 0;
+ };
+
  template<typename T, template<typename> class Activation>
- class Layer {
+ class Layer : public LayerBase<T> {
   private:
    Matrix<T> weights_;
    Matrix<T> bias_;
@@ -127,7 +136,7 @@ namespace nn {
     initialize_weights(init_type);
    }
    
-   void set_optimizer(Optimizer<T>* optimizer) {
+   void set_optimizer(Optimizer<T>* optimizer) override {
     optimizer_ = optimizer;
    }
 
@@ -144,7 +153,7 @@ namespace nn {
    const Matrix<T>& weights() const { return weights_; }
    const Matrix<T>& bias() const { return bias_; }
 
-   Matrix<T> forward(const Matrix<T>& input) {
+   Matrix<T> forward(const Matrix<T>& input) override {
     if (input.columns() != 1 || input.rows() != input_size_) {
      throw std::invalid_argument("input dimensions do not match layer input size");
     }
@@ -162,7 +171,7 @@ namespace nn {
     return output;
    }
 
-   Matrix<T> backward(const Matrix<T>& gradient_from_next_layer) {
+   Matrix<T> backward(const Matrix<T>& gradient_from_next_layer) override {
     Matrix<T> activation_gradient(output_size_, 1);
     for (size_t i = 0; i < output_size_; i++) {
      activation_gradient.at(i, 0) = Activation<T>::backward(last_z_.at(i, 0));
