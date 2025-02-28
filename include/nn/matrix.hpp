@@ -154,7 +154,7 @@ class Matrix {
   Matrix<T>& operator*=(const T scalar) { return scalar_mul_inplace(scalar); }
 
   Matrix transpose() const {
-   Matrix<T> result(rows_, columns_);
+   Matrix<T> result(columns_, rows_);
 
    for (size_t i = 0; i < rows_; i++) {
     for (size_t j = 0; j < columns_; j++) {
